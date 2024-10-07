@@ -1,10 +1,10 @@
 resource "digitalocean_droplet" "droplet" {
-  count    = 1
+  count    = var.droplet_count
   image    = "ubuntu-22-04-x64"
-  name     = "${var.group_name}-${var.droplet_names[count.index]}"
+  name     = "${var.environment}-${var.droplet_names[count.index]}"
   ipv6     = true
   region   = "lon1"
-  size     = "s-1vcpu-1gb"
+  size     = "${var.droplet_size}"
   ssh_keys = [
     data.digitalocean_ssh_key.ssh_key.id
   ]

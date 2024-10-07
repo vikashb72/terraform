@@ -14,9 +14,14 @@ terraform init
 ## Plan
 terraform plan \
   -var "do_token=${DO_PAT}" \
-  -var "group_name=${EVT}"
+  -var "environment=${EVT}" \
+  -var "droplet_count=1" \
+  -var "droplet_size=s-1vcpu-1gb"
+
 
 ## Apply
 terraform apply \
   -var "do_token=${DO_PAT}" \
-  -var "group_name=${EVT}"
+  -var "environment=${EVT}" \
+  -var "droplet_count=1" \
+  -var "droplet_size=s-1vcpu-1gb"

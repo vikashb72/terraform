@@ -22,17 +22,17 @@ apt install -yq \
     containerd.io \
     docker-buildx-plugin \
     docker-compose-plugin \
-    apparmor-utils
+    apparmor-utils \
+    sshguard
 
 curl -sL https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker \
     -o /etc/bash_completion.d/docker.sh
 
 # Enable and configure firewall
-
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
-sudo ufw allow OpenSSH
-sudo ufw --force enable
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow OpenSSH
+ufw --force enable
 
 # Add useraccounts
 for ADM in vikash.badal donovan.austin raghuveersingh.choudhari sparsh.sharma
@@ -45,3 +45,21 @@ do
         && chmod 644 /home/${ADM}/.ssh/authorized_keys
     chown -R ${ADM} /home/${ADM}/.ssh
 done
+
+# Configure ufw for sshguard
+LINES=$(cat /etc/ufw/before.rules | wc -l)
+NEEDED=$((LINES-2))
+head -n ${NEEDED} /etc/ufw/before.rules > /tmp/ufw-before.rules
+
+cat <<EOT >> /tmp/ufw-before.rules
+# for ipv4
+:sshguard - [0:0]
+-A ufw-before-input -p tcp --dport 22 -j sshguard
+# for ipv6
+:sshguard - [0:0]
+-A ufw6-before-input -p tcp --dport 22 -j sshguard
+
+# don't delete the 'COMMIT' line or these rules won't be processed
+COMMIT
+EOT
+reboot

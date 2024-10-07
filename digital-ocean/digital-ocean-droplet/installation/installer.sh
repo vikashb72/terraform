@@ -32,5 +32,16 @@ curl -sL https://raw.githubusercontent.com/docker/docker-ce/master/components/cl
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
 sudo ufw allow OpenSSH
-#sudo ufw allow from 147.161.162.190 to any port 22
-sudo ufw enable
+sudo ufw --force enable
+
+# Add useraccounts
+for ADM in vikash.badal donovan.austin raghuveersingh.choudhari sparsh.sharma
+do
+    useradd -d /home/${ADM} -G sudo,root,adm -s /bin/bash ${ADM}
+    mkdir -p /home/${ADM}/.ssh
+    [ -f /tmp/installation/${ADM}.ssh.pub ] \
+        && cp /tmp/installation/${ADM}.ssh.pub \
+           /home/${ADM}/.ssh/authorized_keys \
+        && chmod 644 /home/${ADM}/.ssh/authorized_keys
+    chown -R ${ADM} /home/${ADM}/.ssh
+done

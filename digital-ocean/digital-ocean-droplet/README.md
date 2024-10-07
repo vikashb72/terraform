@@ -14,11 +14,9 @@ terraform init
 ## Plan
 terraform plan \
   -var "do_token=${DO_PAT}" \
-  -var "private_key=ssh.key" \
   -var "group_name=${EVT}"
 
 ## Apply
 terraform apply \
   -var "do_token=${DO_PAT}" \
-  -var "private_key=ssh.key" \
   -var "group_name=${EVT}"

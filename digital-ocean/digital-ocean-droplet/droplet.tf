@@ -7,7 +7,6 @@ resource "digitalocean_droplet" "droplet" {
   size     = "s-1vcpu-1gb"
   ssh_keys = [
     data.digitalocean_ssh_key.ssh_key.id
-    #"43:33:e9:c9:bb:73:fb:ec:13:86:ab:55:0a:32:a3:6a"
   ]
 
   #  Failed to read ssh private key: password protected keys are
@@ -16,35 +15,26 @@ resource "digitalocean_droplet" "droplet" {
     host        = self.ipv4_address
     user        = "root"
     type        = "ssh"
-    #private_key = "${file(var.private_key)}"
-    timeout     = "30s"
+    timeout     = "90s"
     agent       = true
-  }
-
-  provisioner "file" {
-    source      = "docker.install.sh"
-    destination = "/tmp/docker.install.sh"
   }
 
   provisioner "remote-exec" {
     inline = [
-        "chmod +x /tmp/docker.install.sh",
-        "/tmp/docker.install.sh",
-        "rm /tmp/docker.install.sh"
+        "mkdir -p /tmp/installation"
     ]
   }
 
-  #provisioner "remote-exec" {
-  #  inline = [
-  #    "export PATH=$PATH:/usr/bin",
-  #    # install nginx
-  #    "sudo apt update",
-  #    "sudo apt install -y nginx"
-  #  ]
-  #}
+  provisioner "file" {
+    source      = "installation/"
+    destination = "/tmp/installation"
+  }
 
-  #provisioner "local-exec" {
-  #  when    = destroy
-  #  command = "echo 'Droplet ${self.name} is being destroyed!'"
-  #}
+  provisioner "remote-exec" {
+    inline = [
+        "chmod +x /tmp/installation/installer.sh",
+        "/tmp/installation/installer.sh",
+        "rm -rf /tmp/installation"
+    ]
+  }
 }

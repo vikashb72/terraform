@@ -1,5 +1,5 @@
 variable "do_token" {}
-variable "private_key" {}
+#variable "private_key" {}
 variable "group_name" {}
 variable "droplet_names" {
    type    = list(string)

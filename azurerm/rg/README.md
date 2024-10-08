@@ -1,4 +1,4 @@
-# Teraform + Azure Event Hub
+# Teraform + Azure Resource Group
 
 ## First Steps
 

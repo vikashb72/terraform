@@ -16,3 +16,7 @@ variable "firewall_subnet" {
   type    = string
   default = "10.0.0.32/28"
 }
+variable "acr_subnet" {
+  type    = string
+  default = "10.0.0.48/28"
+}

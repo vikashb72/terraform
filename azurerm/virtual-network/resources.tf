@@ -30,6 +30,19 @@ resource "azurerm_subnet" "snet_acr" {
   ]
 }
 
+# Create acr subnet
+resource "azurerm_subnet" "snet_kv" {
+  name                                          = "snet-kv-${var.environment}-home.where-ever"
+  resource_group_name                           = azurerm_virtual_network.vnet.resource_group_name
+  virtual_network_name                          = azurerm_virtual_network.vnet.name
+  address_prefixes                              = var.kv_subnet
+  private_endpoint_network_policies_enabled     = false
+  private_link_service_network_policies_enabled = false
+  depends_on = [
+    azurerm_virtual_network.vnet
+  ]
+}
+
 # Create bastion host subnet
 #resource "azurerm_subnet" "snet_bastion" {
 #  name                                          = "snet-bastion-${var.environment}-home.where-ever"

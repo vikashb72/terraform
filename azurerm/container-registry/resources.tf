@@ -45,7 +45,7 @@ resource "azurerm_container_registry" "acr" {
 
 # Create private DNS zone for Azure container registry
 resource "azurerm_private_dns_zone" "pdz_acr" {
-  name                = "privatelink-acr-${var.environment}-home.where-ever"
+  name                = "pds-acr-${var.environment}-home.where-ever"
   resource_group_name = azurerm_virtual_network.vnet.resource_group_name
 
   lifecycle {
@@ -60,7 +60,7 @@ resource "azurerm_private_dns_zone" "pdz_acr" {
 
 # Create private virtual network link to Virtual Network
 resource "azurerm_private_dns_zone_virtual_network_link" "acr_pdz_vnet_link" {
-  name                  = "privatelink_to_${azurerm_virtual_network.vnet.name}"
+  name                  = "private-link-to-${azurerm_virtual_network.vnet.name}"
   resource_group_name   = azurerm_resource_group.resource_group.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
   private_dns_zone_name = azurerm_private_dns_zone.pdz_acr.name

@@ -1,4 +1,4 @@
 provider "azurerm" {
   features {}
-  tenant_id       = var.az_tenant_id
+  tenant_id  = var.az_tenant_id
 }

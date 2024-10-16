@@ -7,7 +7,7 @@ terraform {
     }
 
     azuread = {
-      version = ">= 2.26.0" // https://github.com/terraform-providers/terraform-provider-azuread/releases
+      version = ">= 2.26.0"
     }
   }
 }

@@ -26,4 +26,3 @@ terraform plan \
 terraform apply \
   -var "environment=test" \
   -var "az_tenant_id=${AZ_TENANT_ID}"
-

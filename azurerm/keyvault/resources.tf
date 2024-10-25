@@ -6,7 +6,7 @@ resource "azurerm_key_vault" "kv" {
   resource_group_name             = data.azurerm_resource_group.resource_group.name
   enabled_for_disk_encryption     = var.enabled_for_disk_encryption
   tenant_id                       = data.azurerm_client_config.current.tenant_id
-  soft_delete_retention_days      = 7r.soft_delete_retention_days
+  soft_delete_retention_days      = 7
   purge_protection_enabled        = var.purge_protection_enabled
   sku_name                        = var.kv_sku_name
   enabled_for_deployment          = var.enabled_for_deployment
@@ -58,27 +58,12 @@ resource "azurerm_key_vault" "kv" {
 #  ]
 #}
 
-# Create private DNS zone for key vault
-resource "azurerm_private_dns_zone" "pdz_kv" {
-  name                = "pdz-kv-${var.environment}-home.where-ever"
-  resource_group_name = azurerm_virtual_network.vnet.resource_group_name
-
-  lifecycle {
-    ignore_changes = [
-      tags
-    ]
-  }
-  depends_on = [
-    azurerm_virtual_network.vnet
-  ]
-}
-
 # Create private virtual network link to spoke vnet
 resource "azurerm_private_dns_zone_virtual_network_link" "kv_pdz_vnet_link" {
-  name                  = "private-link-to-${azurerm_virtual_network.vnet.name}"
+  name                  = "kv-dns-link-${azurerm_virtual_network.vnet.name}"
   resource_group_name   = azurerm_resource_group.vnet.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
-  private_dns_zone_name = azurerm_private_dns_zone.pdz_kv.name
+  private_dns_zone_name = azurerm_private_dns_zone.pvt_dns_zone.name
 
   lifecycle {
     ignore_changes = [
@@ -88,7 +73,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "kv_pdz_vnet_link" {
   depends_on = [
     azurerm_resource_group.vnet,
     azurerm_virtual_network.vnet,
-    azurerm_private_dns_zone.pdz_kv
+    azurerm_private_dns_zone.pvt_dns_zone
   ]
 }
 
@@ -120,6 +105,19 @@ resource "azurerm_private_endpoint" "pe_kv" {
   }
   depends_on = [
     azurerm_key_vault.kv,
-    azurerm_private_dns_zone.pdz_kv
+    azurerm_private_dns_zone.pvt_dns_zone
+  ]
+}
+
+# Create keyvault subnet
+resource "azurerm_subnet" "snet_kv" {
+  name                                          = "snet-kv-${var.environment}-${var.suffix}"
+  resource_group_name                           = azurerm_virtual_network.vnet.resource_group_name
+  virtual_network_name                          = azurerm_virtual_network.vnet.name
+  address_prefixes                              = var.kv_subnet
+  private_endpoint_network_policies             = "Enabled"
+  private_link_service_network_policies_enabled = false
+  depends_on = [
+    azurerm_virtual_network.vnet
   ]
 }

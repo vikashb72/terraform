@@ -43,27 +43,12 @@ resource "azurerm_container_registry" "acr" {
   ]
 }
 
-# Create private DNS zone for Azure container registry
-resource "azurerm_private_dns_zone" "pdz_acr" {
-  name                = "pds-acr-${var.environment}-home.where-ever"
-  resource_group_name = azurerm_virtual_network.vnet.resource_group_name
-
-  lifecycle {
-    ignore_changes = [
-      tags
-    ]
-  }
-  depends_on = [
-    azurerm_virtual_network.vnet
-  ]
-}
-
 # Create private virtual network link to Virtual Network
 resource "azurerm_private_dns_zone_virtual_network_link" "acr_pdz_vnet_link" {
-  name                  = "private-link-to-${azurerm_virtual_network.vnet.name}"
+  name                  = "acr-private-link-${azurerm_virtual_network.vnet.name}"
   resource_group_name   = azurerm_resource_group.resource_group.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
-  private_dns_zone_name = azurerm_private_dns_zone.pdz_acr.name
+  private_dns_zone_name = azurerm_private_dns_zone.pvt_dns_zone.name
 
   lifecycle {
     ignore_changes = [
@@ -73,7 +58,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "acr_pdz_vnet_link" {
   depends_on = [
     azurerm_resource_group.resource_group,
     azurerm_virtual_network.vnet,
-    azurerm_private_dns_zone.pdz_acr
+    azurerm_private_dns_zone.pvt_dns_zone
   ]
 }
 
@@ -94,16 +79,29 @@ resource "azurerm_private_endpoint" "pe_acr" {
 
   private_dns_zone_group {
     name                 = "default" //var.pe_acr_private_dns_zone_group_name
-    private_dns_zone_ids = [azurerm_private_dns_zone.pdz_acr.id]
+    private_dns_zone_ids = [azurerm_private_dns_zone.pvt_dns_zone.id]
   }
 
   lifecycle {
     ignore_changes = [
-      tags,
+      tags
     ]
   }
   depends_on = [
     azurerm_container_registry.acr,
-    azurerm_private_dns_zone.pdz_acr
+    azurerm_private_dns_zone.pvt_dns_zone
+  ]
+}
+
+# Create acr subnet
+resource "azurerm_subnet" "snet_acr" {
+  name                                          = "snet-acr-${var.environment}-${var.suffix}"
+  resource_group_name                           = azurerm_virtual_network.vnet.resource_group_name
+  virtual_network_name                          = azurerm_virtual_network.vnet.name
+  address_prefixes                              = var.acr_subnet
+  private_endpoint_network_policies             = "Enabled"
+  private_link_service_network_policies_enabled = false
+  depends_on = [
+    azurerm_virtual_network.vnet
   ]
 }

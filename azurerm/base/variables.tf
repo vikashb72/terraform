@@ -24,20 +24,21 @@ variable "suffix" {
 # Management
 variable "vnet_subnets" {
   type    = list(string)
-  default = ["10.0.0.0/16"]
+  default = ["10.0.0.0/20"]
 }
-# Gateway Subnet
-variable "gateway_subnet" {
+# Private enpoint Subnet
+variable "pvt_endpoint_subnet" {
   type    = list(string)
-  default = ["10.0.0.0/28"]
+  default = ["10.0.15.0/24"]
 }
-# ACR Subnet
-variable "acr_subnet" {
+
+## Gateway Subnet
+#variable "gateway_subnet" {
+#  type    = list(string)
+#  default = ["10.0.0.0/28"]
+#}
+# Storage Subnet
+variable "storage_subnet" {
   type    = list(string)
   default = ["10.0.0.16/28"]
-}
-# KeyVault
-variable "kv_subnet" {
-  type    = list(string)
-  default = ["10.0.0.32/28"]
 }

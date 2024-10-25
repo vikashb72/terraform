@@ -8,6 +8,16 @@ output "acr_id" {
   value       = azurerm_container_registry.acr.id
 }
 
+output "subnet_acr_name" {
+  description = "Specifies the resource id of the acr subnets"
+  value       = azurerm_subnet.snet_acr.name
+}
+
+output "subnet_acr_id" {
+  description = "Specifies the resource id of the acr subnets"
+  value       = azurerm_subnet.snet_acr.id
+}
+
 output "acr_resource_group_name" {
   description = "Specifies the name of the resource group."
   value       = azurerm_container_registry.acr.resource_group_name

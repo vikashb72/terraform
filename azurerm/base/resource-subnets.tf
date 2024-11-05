@@ -26,8 +26,6 @@ resource "azurerm_subnet" "snet" {
   ]
 }
 
-
-
 # OUTPUTS
 
 output "snet_name" {

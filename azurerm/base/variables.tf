@@ -42,3 +42,14 @@ variable "storage_account_containers" {
     "logs"
   ]
 }
+
+#variable "dns_records" {
+#  description = "Settings for DNS records"
+#  type = list(object({
+#    zone_name   = string
+#    record_name = string
+#    ttl         = number
+#    ip          = string
+#  }))
+#}
+

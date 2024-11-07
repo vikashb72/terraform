@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "storage_account" {
-  name                     = "${var.environment}storageaccount"
+  name                     = "sa0whereever0${var.environment}"
   resource_group_name      = azurerm_resource_group.resource_group.name
   location                 = azurerm_resource_group.resource_group.location
   account_tier             = "Standard"
@@ -37,7 +37,8 @@ resource "azurerm_private_dns_zone_virtual_network_link" "storage_link_dns_zone_
 
 # Create a DNS Record for the Private Endpoint
 resource "azurerm_private_dns_a_record" "storage_blob_record" {
-  name                = azurerm_storage_account.storage_account.primary_blob_endpoint
+  #name                = azurerm_storage_account.storage_account.primary_blob_endpoint
+  name                = "storage-pvt-dns-${var.environment}"
   zone_name           = azurerm_private_dns_zone.pvt_dns_zone.name
   resource_group_name = azurerm_resource_group.resource_group.name
   ttl                 = 300

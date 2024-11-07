@@ -20,6 +20,11 @@ resource "azurerm_private_endpoint" "storage_account_private_endpoint" {
   location            = azurerm_resource_group.resource_group.location
   subnet_id           = azurerm_subnet.snet["pvtendpoint"].id
 
+  depends_on = [
+    azurerm_resource_group.resource_group,
+    azurerm_virtual_network.vnet
+  ]
+
   private_service_connection {
     name                           = "storage-account-private-connection-${var.environment}-${var.suffix}"
     private_connection_resource_id = azurerm_storage_account.storage_account.id
@@ -33,6 +38,12 @@ resource "azurerm_private_dns_zone_virtual_network_link" "storage_link_dns_zone_
   resource_group_name   = azurerm_resource_group.resource_group.name
   private_dns_zone_name = azurerm_private_dns_zone.pvt_dns_zone.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
+
+  depends_on = [
+    azurerm_resource_group.resource_group,
+    azurerm_virtual_network.vnet,
+    azurerm_private_endpoint.storage_account_private_endpoint
+  ]
 }
 
 # Create a DNS Record for the Private Endpoint
@@ -42,5 +53,11 @@ resource "azurerm_private_dns_a_record" "storage_blob_record" {
   resource_group_name = azurerm_resource_group.resource_group.name
   ttl                 = 300
   records             = [azurerm_private_endpoint.storage_account_private_endpoint.private_service_connection[0].private_ip_address]
+
+  depends_on = [
+    azurerm_resource_group.resource_group,
+    azurerm_virtual_network.vnet,
+    azurerm_private_endpoint.storage_account_private_endpoint
+  ]
 }
 #

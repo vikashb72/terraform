@@ -1,5 +1,26 @@
-variable "environment" {}
+# -- Required
+
+# Enviroment dev|uat|prod
+variable "environment" {
+    type    = string
+}
+
+# az account show | jq -r '.tenantId'
 variable "az_tenant_id" {}
+
+# -- Optional
+
+# Location
+variable "az_location" {
+  type    = string
+  default = "South Africa North"
+}
+
+# Suffix
+variable "suffix" {
+  type    = string
+  default = "home-where-ever"
+}
 
 #variable "kv_owner_object_id" {
 #  description = "(Required) object ids of the key vault owners who needs access to key vault."
@@ -39,7 +60,7 @@ variable "enabled_for_template_deployment" {
 variable "enable_rbac_authorization" {
   description = "(Optional) Boolean flag to specify whether Azure Key Vault uses Role Based Access Control (RBAC) for authorization of data actions. Defaults to false."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "purge_protection_enabled" {

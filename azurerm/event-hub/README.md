@@ -3,6 +3,8 @@
 ## First Steps
 
 az login
+EVT="envname"
+# dev|uat ...etc
 
 AZ_TENANT_ID=$(az account show | jq -r '.tenantId')
 
@@ -11,10 +13,10 @@ terraform init
 
 ## Plan
 terraform plan \
-  -var "environment=test" \
-  -var "az_tenant_id=${AZ_TENANT_ID}"
+  -var "az_tenant_id=${AZ_TENANT_ID}" \
+  -var-file=tfvars/${EVT}.tfvars
 
 ## Apply
 terraform apply \
-  -var "environment=test" \
-  -var "az_tenant_id=${AZ_TENANT_ID}"
+  -var "az_tenant_id=${AZ_TENANT_ID}" \
+  -var-file=tfvars/${EVT}.tfvars

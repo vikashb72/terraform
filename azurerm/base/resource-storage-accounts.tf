@@ -61,3 +61,21 @@ resource "azurerm_private_dns_a_record" "storage_blob_record" {
   ]
 }
 #
+
+# Create storage container
+#resource "azurerm_storage_container" "storage_container" {
+#  for_each              = toset(var.storage_account_containers)
+#  name                  = format("storage-container-%s-%s", each.key, local.suffix)
+#  storage_account_name  = azurerm_storage_account.storage_account.name
+#  container_access_type = "private"
+#
+#  lifecycle {
+#    prevent_destroy = true
+#  }
+#
+#  depends_on = [
+#    azurerm_resource_group.resource_group,
+#    azurerm_virtual_network.vnet,
+#    azurerm_storage_account.storage_account
+#  ]
+#}

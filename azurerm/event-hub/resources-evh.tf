@@ -50,7 +50,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "evh_link_dns_zone_vnet
   ]
 }
 
-## Consumer topic(s)
+# Consumer topic(s)
 resource "azurerm_eventhub" "evh" {
   for_each            = { for topic in var.topics: topic.key => topic }
   name                = format("evh-topic-%s-%s", each.key, local.suffix)
@@ -72,12 +72,16 @@ resource "azurerm_eventhub" "evh" {
 
 }
 
-output "evh_topic" {
-  value = azurerm_eventhub.evh
-}
- 
-output "evh_topic2" {
-  value = [ for c in local.consumers : c ]
+# Roles
+resource "azurerm_eventhub_authorization_rule" "evh_listen_role" {
+  for_each            = { for topic in var.topics: topic.key => topic }
+  name                = format("evh-role-%s-%s", each.key, local.suffix)
+  namespace_name      = azurerm_eventhub_namespace.evhns.name
+  eventhub_name       = format("evh-topic-%s-%s", each.key, local.suffix)
+  resource_group_name = data.azurerm_resource_group.resource_group.name
+  listen              = each.value.listen
+  send                = each.value.send
+  manage              = each.value.manage
 }
 
 resource "azurerm_eventhub_consumer_group" "consumer_group" {
@@ -132,46 +136,7 @@ resource "azurerm_eventhub_consumer_group" "consumer_group" {
 #  ]
 #}
 
-# Roles
-#resource "azurerm_eventhub_authorization_rule" "evh_listen_role" {
-#  name                = "evh-listen-role-${var.environment}-home-where-ever"
-#  namespace_name      = azurerm_eventhub_namespace.evhns.name
-#  eventhub_name       = azurerm_eventhub.evh.name
-#  resource_group_name = data.azurerm_resource_group.resource_group.name
-#  listen              = true
-#  send                = false
-#  manage              = false
-#}
-#
-#resource "azurerm_eventhub_authorization_rule" "evh_send_role" {
-#  name                = "evh-send-role-${var.environment}-home-where-ever"
-#  namespace_name      = azurerm_eventhub_namespace.evhns.name
-#  eventhub_name       = azurerm_eventhub.evh.name
-#  resource_group_name = data.azurerm_resource_group.resource_group.name
-#  listen              = false
-#  send                = true
-#  manage              = false
-#}
-#
-#resource "azurerm_eventhub_authorization_rule" "evh_manage_role" {
-#  name                = "evh-manage-role-${var.environment}-home-where-ever"
-#  namespace_name      = azurerm_eventhub_namespace.evhns.name
-#  eventhub_name       = azurerm_eventhub.evh.name
-#  resource_group_name = data.azurerm_resource_group.resource_group.name
-#  listen              = true
-#  send                = true
-#  manage              = true
-#}
-
 # What exactly are these
-#resource "azurerm_eventhub_consumer_group" "cg_1" {
-#  name                = "evh-consumer-group-${var.environment}-home-where-ever"
-#  namespace_name      = azurerm_eventhub_namespace.evhns.name
-#  eventhub_name       = azurerm_eventhub.evh.name
-#  resource_group_name = data.azurerm_resource_group.resource_group.name
-#  user_metadata       = "some-meta-data"
-#}
-#
 #resource "azurerm_role_assignment" "pod-identity-assignment" {
 #  scope                = data.azurerm_resource_group.resourceGroup.id
 #  role_definition_name = "Azure Event Hubs Data Owner"

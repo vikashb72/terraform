@@ -22,7 +22,12 @@ variable "suffix" {
   default = "home-where-ever"
 }
 
-# Evh
-variable "evh" {
-  default = {}
+# subnet_address_prefix
+variable "subnet_address_prefix" {
+  default = []
+}
+
+# Evh Topics
+variable "topics" {
+   default = []
 }

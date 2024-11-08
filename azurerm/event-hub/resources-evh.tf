@@ -15,9 +15,44 @@ resource "azurerm_eventhub_namespace" "evhns" {
   ]
 }
 
+# Create Private Endpoint for the EVH
+resource "azurerm_private_endpoint" "evh_private_endpoint" {
+  name                = "evh-private-endpoint-${local.suffix}"
+  resource_group_name = data.azurerm_resource_group.resource_group.name
+  location            = data.azurerm_resource_group.resource_group.location
+  subnet_id           = azurerm_subnet.evh_snet.id
+
+  depends_on = [
+    data.azurerm_resource_group.resource_group,
+    azurerm_subnet.evh_snet,
+    azurerm_eventhub_namespace.evhns
+  ]
+
+  private_service_connection {
+    name                           = "evh-private-connection-${local.suffix}"
+
+    private_connection_resource_id = azurerm_eventhub_namespace.evhns.id
+    subresource_names              = ["namespace"]
+    is_manual_connection           = false
+  }
+}
+
+# DNS Link
+resource "azurerm_private_dns_zone_virtual_network_link" "evh_link_dns_zone_vnet" {
+  name                  = "evh-dns-link-${local.suffix}"
+  resource_group_name   = data.azurerm_resource_group.resource_group.name
+  private_dns_zone_name = data.azurerm_private_dns_zone.pvt_dns_zone.name
+  virtual_network_id    = data.azurerm_virtual_network.vnet.id
+
+  depends_on = [
+    data.azurerm_resource_group.resource_group,
+    data.azurerm_virtual_network.vnet
+  ]
+}
+
 ## Consumer topic(s)
 resource "azurerm_eventhub" "evh" {
-  for_each            = { for topic in var.evh.topics: topic.key => topic }
+  for_each            = { for topic in var.topics: topic.key => topic }
   name                = format("evh-topic-%s-%s", each.key, local.suffix)
   namespace_name      = azurerm_eventhub_namespace.evhns.name
   resource_group_name = data.azurerm_resource_group.resource_group.name
@@ -37,14 +72,21 @@ resource "azurerm_eventhub" "evh" {
 
 }
 
-# 
+output "evh_topic" {
+  value = azurerm_eventhub.evh
+}
+ 
+output "evh_topic2" {
+  value = [ for c in local.consumers : c ]
+}
+
 resource "azurerm_eventhub_consumer_group" "consumer_group" {
-  for_each            = { for topic in var.evh.topics: topic.key => topic }
-  name                = format("evh-consumer-group-%s-%s", each.value.key, local.suffix)
+  for_each            = local.consumers
+  name                = format("evh-cg-%s-%s-%s", each.value.key, each.value.consumer, var.environment)
   namespace_name      = azurerm_eventhub_namespace.evhns.name
-  eventhub_name       = azurerm_eventhub.evh.value.key
+  eventhub_name       = format("gc-topic-%s-%s-%s", each.value.key, each.value.consumer, local.suffix)
   resource_group_name = data.azurerm_resource_group.resource_group.name
-  user_metadata       = "some-meta-data"
+  user_metadata       = "initial-terraform"
 }
 
 #

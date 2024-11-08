@@ -23,8 +23,3 @@ data "azurerm_private_dns_zone" "pvt_dns_zone" {
 #output "pvt_dns_zone" {
 #  value = data.azurerm_private_dns_zone.pvt_dns_zone.name
 #}
-
-output "evt1" {
-  #value = var.evh
-  value = [ for evh in var.evh.topics : evh ]
-}

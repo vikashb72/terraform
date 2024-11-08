@@ -6,14 +6,14 @@
 #}
 
 #resource "azurerm_subnet" "snet_pvt_endpoint" {
-#  name                 = "snet-pvt-endpoint-${var.environment}-${var.suffix}"
+#  name                 = "snet-pvt-endpoint-${local.suffix}"
 #  resource_group_name  = azurerm_virtual_network.vnet.resource_group_name
 #  virtual_network_name = azurerm_virtual_network.vnet.name
 #  address_prefixes     = var.pvt_endpoint_subnet
 #
 #  # Delegating subnet to allow for Private Endpoint
 #  delegation {
-#    name = "private-endpoint-delegation-${var.environment}-${var.suffix}"
+#    name = "private-endpoint-delegation-${local.suffix}"
 #    service_delegation {
 #      name    = "Microsoft.Network/virtualNetworkGateways"
 #      actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]

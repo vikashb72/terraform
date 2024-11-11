@@ -31,6 +31,23 @@ resource "azurerm_storage_container" "storage_container" {
   ]
 }
 
+# Create private DNS zone for blob storage account
+resource "azurerm_private_dns_zone" "pdz_storage" {
+  name                = "privatelink.blob.core.windows.net"
+  resource_group_name = azurerm_virtual_network.env_vnet.resource_group_name
+
+  tags = local.env.tags
+
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
+  depends_on = [
+    azurerm_virtual_network.env_vnet
+  ]
+}
+
 # Create Private Endpoint for the Storage Account
 #resource "azurerm_private_endpoint" "storage_account_private_endpoint" {
 #  name                = "storage-account-private-endpoint-${local.suffix}"

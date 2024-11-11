@@ -3,8 +3,9 @@
 #  name                = format("pep-%s-%s", each.key, local.suffix)
 #  location            = azurerm_resource_group.resource_group.location
 #  resource_group_name = azurerm_resource_group.resource_group.name
+#  subnet_id           = data.azurerm_subnet.subnet["pvtendpoint"].id
 #}
-
+#
 #resource "azurerm_subnet" "snet_pvt_endpoint" {
 #  name                 = "snet-pvt-endpoint-${local.suffix}"
 #  resource_group_name  = azurerm_virtual_network.vnet.resource_group_name

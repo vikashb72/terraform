@@ -18,7 +18,7 @@ resource "azurerm_private_endpoint" "storage_account_private_endpoint" {
   name                = "storage-account-private-endpoint-${local.suffix}"
   resource_group_name = azurerm_resource_group.resource_group.name
   location            = azurerm_resource_group.resource_group.location
-  subnet_id           = azurerm_subnet.snet["pvtendpoint"].id
+  subnet_id           = azurerm_subnet.vnet.id
 
   depends_on = [
     azurerm_resource_group.resource_group,
@@ -26,7 +26,7 @@ resource "azurerm_private_endpoint" "storage_account_private_endpoint" {
   ]
 
   private_service_connection {
-    name                           = "storage-account-pvt-conn-${local.suffix}"
+    name                           = "pe-storage-account-${local.suffix}"
     private_connection_resource_id = azurerm_storage_account.storage_account.id
     subresource_names              = ["blob"] 
     is_manual_connection           = false

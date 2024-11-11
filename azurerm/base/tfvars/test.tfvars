@@ -9,61 +9,29 @@ az_location         = "South Africa North"
 suffix              = "home-where-ever"
 
 # Virtual Networks
-# Management
 vnet_subnets        = ["10.0.0.0/20"]
 
+# Subnets
 subnets = {
-  "management" = {
-    "subnet_name"                                    = "management",
-    "subnet_address_prefix"                          = ["10.0.0.0/24"],
+  "services" = {
+    "subnet_name"                                    = "services",
+    "subnet_address_prefix"                          = ["10.0.1.0/24"],
     "enforce_private_link_endpoint_network_policies" = true,
     "enforce_private_link_service_network_policies"  = false,
     "delegation"                                     = {},
     "service_endpoints"                              = []
   },
   "storage" = {
-    "subnet_name"                                    = "storage-01",
-    "subnet_address_prefix"                          = ["10.0.1.0/24"],
+    "subnet_name"                                    = "storage",
+    "subnet_address_prefix"                          = ["10.0.2.0/24"],
     "enforce_private_link_endpoint_network_policies" = true,
     "enforce_private_link_service_network_policies"  = false,
     "delegation"                                     = {},
     "service_endpoints"                              = ["Microsoft.Storage"]
   },
-  #"aksnodepool01" = {
-  #  "subnet_name"                                    = "aks-nodepool-01",
-  #  "subnet_address_prefix"                          = ["10.0.2.0/24"],
-  #  "enforce_private_link_endpoint_network_policies" = true,
-  #  "enforce_private_link_service_network_policies"  = false,
-  #  "delegation"                                     = {},
-  #  "service_endpoints"                              = []
-  #},
   "keyvault" = {
     "subnet_name"                                    = "keyvault",
     "subnet_address_prefix"                          = ["10.0.3.0/24"],
-    "enforce_private_link_endpoint_network_policies" = true,
-    "enforce_private_link_service_network_policies"  = false,
-    "delegation"                                     = {},
-    "service_endpoints"                              = []
-  },
-  #"acr" = {
-  #  "subnet_name"                                    = "acr",
-  #  "subnet_address_prefix"                          = ["10.0.4.0/24"],
-  #  "enforce_private_link_endpoint_network_policies" = true,
-  #  "enforce_private_link_service_network_policies"  = false,
-  #  "delegation"                                     = {},
-  #  "service_endpoints"                              = []
-  #},
-  #"services" = {
-  #  "subnet_name"                                    = "services",
-  #  "subnet_address_prefix"                          = ["10.0.5.0/24"],
-  #  "enforce_private_link_endpoint_network_policies" = true,
-  #  "enforce_private_link_service_network_policies"  = false,
-  #  "delegation"                                     = {},
-  #  "service_endpoints"                              = []
-  #},
-  "pvtendpoint" = {
-    "subnet_name"                                    = "pvt-endpoint",
-    "subnet_address_prefix"                          = ["10.0.6.0/24"],
     "enforce_private_link_endpoint_network_policies" = true,
     "enforce_private_link_service_network_policies"  = false,
     "delegation"                                     = {},

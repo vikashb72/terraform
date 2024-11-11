@@ -44,7 +44,8 @@ resource "azurerm_private_dns_zone" "pdz_storage" {
     ]
   }
   depends_on = [
-    azurerm_virtual_network.env_vnet
+    azurerm_virtual_network.env_vnet,
+    azurerm_storage_account.storage_account
   ]
 }
 
@@ -58,29 +59,38 @@ resource "azurerm_private_dns_zone_virtual_network_link" "storage_link_dns_zone_
   depends_on = [
     azurerm_resource_group.resource_group,
     azurerm_virtual_network.env_vnet,
+    azurerm_storage_account.storage_account,
     azurerm_private_dns_zone.pdz_storage
   ]
 }
 
 # Create Private Endpoint for the Storage Account
-#resource "azurerm_private_endpoint" "storage_account_private_endpoint" {
-#  name                = "storage-account-private-endpoint-${local.suffix}"
-#  resource_group_name = azurerm_resource_group.resource_group.name
-#  location            = azurerm_resource_group.resource_group.location
-#  subnet_id           = azurerm_subnet.vnet.id
-#
-#  depends_on = [
-#    azurerm_resource_group.resource_group,
-#    azurerm_virtual_network.vnet
-#  ]
-#
-#  private_service_connection {
-#    name                           = "pe-storage-account-${local.suffix}"
-#    private_connection_resource_id = azurerm_storage_account.storage_account.id
-#    subresource_names              = ["blob"] 
-#    is_manual_connection           = false
-#  }
-#}
+resource "azurerm_private_endpoint" "sa_private_endpoint" {
+  name                = "sa-private-endpoint-${local.env.suffix}"
+  resource_group_name = azurerm_resource_group.resource_group.name
+  location            = azurerm_resource_group.resource_group.location
+  subnet_id           = data.azurerm_subnet.storage_snet.id
+
+  depends_on = [
+    azurerm_resource_group.resource_group,
+    azurerm_virtual_network.env_vnet,
+    azurerm_storage_account.storage_account,
+    azurerm_private_dns_zone.pdz_storage
+  ]
+
+  private_service_connection {
+    name                           = "pe-sa-${local.env.suffix}"
+    private_connection_resource_id = azurerm_storage_account.storage_account.id
+    subresource_names              = ["blob"] 
+    is_manual_connection           = false
+  }
+
+  private_dns_zone_group {
+    name                 = "whereversapdzgrp"
+    private_dns_zone_ids = [azurerm_private_dns_zone.pdz_storage.id]
+  }
+
+}
 #
 #
 ### Create a DNS Record for the Private Endpoint

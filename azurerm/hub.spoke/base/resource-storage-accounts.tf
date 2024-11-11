@@ -48,6 +48,20 @@ resource "azurerm_private_dns_zone" "pdz_storage" {
   ]
 }
 
+# Create private virtual network link to vnet
+resource "azurerm_private_dns_zone_virtual_network_link" "storage_link_dns_zone_env_vnet" {
+  name                  = "sa-dns-link-${local.env.suffix}"
+  resource_group_name   = azurerm_resource_group.resource_group.name
+  private_dns_zone_name = azurerm_private_dns_zone.pdz_storage.name
+  virtual_network_id    = azurerm_virtual_network.env_vnet.id
+
+  depends_on = [
+    azurerm_resource_group.resource_group,
+    azurerm_virtual_network.env_vnet,
+    azurerm_private_dns_zone.pdz_storage
+  ]
+}
+
 # Create Private Endpoint for the Storage Account
 #resource "azurerm_private_endpoint" "storage_account_private_endpoint" {
 #  name                = "storage-account-private-endpoint-${local.suffix}"
@@ -68,18 +82,6 @@ resource "azurerm_private_dns_zone" "pdz_storage" {
 #  }
 #}
 #
-#resource "azurerm_private_dns_zone_virtual_network_link" "storage_link_dns_zone_vnet" {
-#  name                  = "storage-account-dns-link-${local.suffix}"
-#  resource_group_name   = azurerm_resource_group.resource_group.name
-#  private_dns_zone_name = azurerm_private_dns_zone.pvt_dns_zone.name
-#  virtual_network_id    = azurerm_virtual_network.vnet.id
-#
-#  depends_on = [
-#    azurerm_resource_group.resource_group,
-#    azurerm_virtual_network.vnet,
-#    azurerm_private_endpoint.storage_account_private_endpoint
-#  ]
-#}
 #
 ### Create a DNS Record for the Private Endpoint
 ##resource "azurerm_private_dns_a_record" "storage_blob_record" {

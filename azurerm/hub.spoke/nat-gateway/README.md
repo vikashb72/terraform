@@ -1,13 +1,5 @@
 # Teraform + Azure NAT GW 
 
-## Introduction
-
-Contans the terraform code to establish the base platform for env components
-* Resource Group
-* VNet
-* Subnet(s)
-* Azure KeyVault Name for Storage Account access key
-
 ## First Steps
 
 az login

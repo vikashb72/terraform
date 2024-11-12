@@ -120,7 +120,7 @@ resource "azurerm_private_endpoint" "pe_kv" {
   }
 
   private_dns_zone_group {
-    name                 = "pdz-kv-${local.env.suffix}"
+    name                 = "pdzg-kv-${local.env.suffix}"
     private_dns_zone_ids = [azurerm_private_dns_zone.pdz_kv.id]
   }
 

@@ -89,7 +89,7 @@ resource "azurerm_private_endpoint" "sa_private_endpoint" {
   }
 
   private_dns_zone_group {
-    name                 = "whereversapdzgrp"
+    name                 = "pdzg-sa-${local.env.suffix}"
     private_dns_zone_ids = [azurerm_private_dns_zone.pdz_storage.id]
   }
 }

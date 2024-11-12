@@ -1,3 +1,4 @@
+# Create storage account
 resource "azurerm_storage_account" "storage_account" {
   name                     = "sa${var.environment}wherever01"
   resource_group_name      = azurerm_resource_group.resource_group.name
@@ -21,7 +22,8 @@ resource "azurerm_storage_container" "storage_container" {
   container_access_type = "private"
 
   lifecycle {
-    prevent_destroy = true
+    # prevent_destroy = false
+    prevent_destroy = false
   }
 
   depends_on = [
@@ -43,6 +45,7 @@ resource "azurerm_private_dns_zone" "pdz_storage" {
       tags
     ]
   }
+
   depends_on = [
     azurerm_virtual_network.env_vnet,
     azurerm_storage_account.storage_account
@@ -89,23 +92,19 @@ resource "azurerm_private_endpoint" "sa_private_endpoint" {
     name                 = "whereversapdzgrp"
     private_dns_zone_ids = [azurerm_private_dns_zone.pdz_storage.id]
   }
-
 }
+
+# Create a DNS Record for the Private Endpoint
+#resource "azurerm_private_dns_a_record" "storage_blob_record" {
+#  name                = "storage-pvt-dns-${var.environment}"
+#  zone_name           = azurerm_private_dns_zone.pvt_dns_zone.name
+#  resource_group_name = azurerm_resource_group.resource_group.name
+#  ttl                 = 300
+#  records             = [azurerm_private_endpoint.storage_account_private_endpoint.private_service_connection[0].private_ip_address]
 #
-#
-### Create a DNS Record for the Private Endpoint
-##resource "azurerm_private_dns_a_record" "storage_blob_record" {
-##  name                = "storage-pvt-dns-${var.environment}"
-##  zone_name           = azurerm_private_dns_zone.pvt_dns_zone.name
-##  resource_group_name = azurerm_resource_group.resource_group.name
-##  ttl                 = 300
-##  records             = [azurerm_private_endpoint.storage_account_private_endpoint.private_service_connection[0].private_ip_address]
-##
-##  depends_on = [
-##    azurerm_resource_group.resource_group,
-##    azurerm_virtual_network.vnet,
-##    azurerm_private_endpoint.storage_account_private_endpoint
-##  ]
-##}
-##
-##
+#  depends_on = [
+#    azurerm_resource_group.resource_group,
+#    azurerm_virtual_network.vnet,
+#    azurerm_private_endpoint.storage_account_private_endpoint
+#  ]
+#}

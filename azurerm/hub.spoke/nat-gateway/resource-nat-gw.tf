@@ -27,6 +27,18 @@ resource "azurerm_public_ip_prefix" "nat_prefix" {
   ]
 }
 
+resource "azurerm_lb" "lb" {
+  name                = "lb-nat-gw-${local.env.suffix}"
+  sku                 = "Standard"
+  location            = azurerm_resource_group.env_rg.location
+  resource_group_name = azurerm_resource_group.env_rg.name
+
+  frontend_ip_configuration {
+    name                 = azurerm_public_ip.nat_prefix.name
+    public_ip_address_id = azurerm_public_ip.nat_prefix.id
+  }
+}
+
 resource "azurerm_nat_gateway" "instance_gw" {
   name                    = "nat-gw-${local.env.suffix}"
   resource_group_name     = data.azurerm_resource_group.env_rg.name

@@ -47,37 +47,32 @@ resource "azurerm_private_dns_zone" "pdz_storage" {
   }
 
   depends_on = [
-    azurerm_virtual_network.env_vnet,
-    azurerm_storage_account.storage_account
+    azurerm_virtual_network.env_vnet
   ]
 }
 
 # Create private virtual network link to vnet
-resource "azurerm_private_dns_zone_virtual_network_link" "storage_link_dns_zone_env_vnet" {
-  name                  = "sa-dns-link-${local.env.suffix}"
+resource "azurerm_private_dns_zone_virtual_network_link" "sa_pdz_vnet_link" {
+  name                  = "st-pdz-link-${local.env.suffix}"
   resource_group_name   = azurerm_resource_group.resource_group.name
   private_dns_zone_name = azurerm_private_dns_zone.pdz_storage.name
   virtual_network_id    = azurerm_virtual_network.env_vnet.id
 
   depends_on = [
-    azurerm_resource_group.resource_group,
     azurerm_virtual_network.env_vnet,
-    azurerm_storage_account.storage_account,
     azurerm_private_dns_zone.pdz_storage
   ]
 }
 
 # Create Private Endpoint for the Storage Account
-resource "azurerm_private_endpoint" "sa_private_endpoint" {
-  name                = "sa-private-endpoint-${local.env.suffix}"
+resource "azurerm_private_endpoint" "st_private_endpoint" {
+  name                = "st-private-endpoint-${local.env.suffix}"
   resource_group_name = azurerm_resource_group.resource_group.name
   location            = azurerm_resource_group.resource_group.location
   subnet_id           = data.azurerm_subnet.storage_snet.id
 
   depends_on = [
-    azurerm_resource_group.resource_group,
     azurerm_virtual_network.env_vnet,
-    azurerm_storage_account.storage_account,
     azurerm_private_dns_zone.pdz_storage
   ]
 

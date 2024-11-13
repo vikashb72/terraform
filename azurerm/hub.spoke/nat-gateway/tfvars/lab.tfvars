@@ -9,4 +9,4 @@ az_location         = "South Africa North"
 suffix              = "home-wherever"
 
 # Nat Subnet
-nat_subnet = ["10.0.15.0/24"]
+nat_subnet = ["10.1.15.0/24"]

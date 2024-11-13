@@ -22,9 +22,11 @@ terraform init
 ## Plan
 terraform plan \
   -var "az_tenant_id=${AZ_TENANT_ID}" \
+  -var "kv_owner_object_id=${KV_OWNER_ID}" \
   -var-file=tfvars/${EVT}.tfvars
 
 ## Apply
 terraform apply \
   -var "az_tenant_id=${AZ_TENANT_ID}" \
+  -var "kv_owner_object_id=${KV_OWNER_ID}" \
   -var-file=tfvars/${EVT}.tfvars

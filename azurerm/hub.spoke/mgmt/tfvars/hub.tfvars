@@ -31,11 +31,6 @@ snets = {
   }
 }
 
-storage_containers = [
-  "logs",
-  "metrics"
-]
-
 user_assigned_identity = [
   "aks",
   "external-dns",

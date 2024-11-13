@@ -8,3 +8,5 @@ data "azurerm_subnet" "services" {
     azurerm_subnet.snet
   ]
 }
+
+data "azurerm_client_config" "current" {}

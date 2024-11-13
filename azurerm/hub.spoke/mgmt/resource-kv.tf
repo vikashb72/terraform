@@ -1,6 +1,6 @@
 # Create Azure Key Vault using terraform
 resource "azurerm_key_vault" "kv" {
-  name                            = "kv-wherever-lab-mgmt-${var.environment}-${var.country_code}-01"
+  name                            = "kv-wherever-lab-mgmt-${var.environment}"
   resource_group_name             = azurerm_resource_group.resource_group.name
   location                        = azurerm_resource_group.resource_group.location
   tenant_id                       = var.az_tenant_id

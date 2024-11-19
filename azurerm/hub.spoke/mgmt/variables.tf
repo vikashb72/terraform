@@ -2,7 +2,7 @@
 
 # Enviroment dev|uat|prod
 variable "environment" {
-  type = string
+  type    = string
   default = "hub"
 }
 
@@ -160,3 +160,17 @@ variable "kv_storage_permissions_full" {
   description = "List of full storage permissions, must be one or more from the following: backup, delete, deletesas, get, getsas, list, listsas, purge, recover, regeneratekey, restore, set, setsas and update"
   default     = ["Backup", "Delete", "DeleteSAS", "Get", "GetSAS", "List", "ListSAS", "Purge", "Recover", "RegenerateKey", "Restore", "Set", "SetSAS", "Update", ]
 }
+
+# AKS
+
+variable "kubernetes_version" {
+  description = "Specifies the AKS Kubernetes version"
+  default     = "1.29.8"
+  type        = string
+}
+
+#variable "admin_username" {
+#  description = "Specifies the AKS Admin username"
+#  type        = string
+#}
+

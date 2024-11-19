@@ -1,6 +1,6 @@
 # Create storage account
 resource "azurerm_storage_account" "storage_account" {
-  for_each                 = { for sa in var.storage_accounts: sa.key => sa }
+  for_each                 = { for sa in var.storage_accounts : sa.key => sa }
   name                     = format("samgmt%s%s%s", each.key, var.environment, var.country_code)
   resource_group_name      = azurerm_resource_group.resource_group.name
   location                 = azurerm_resource_group.resource_group.location
@@ -48,7 +48,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "pdz_sa_link" {
 
 # Create Private Endpoint for the Storage Account
 resource "azurerm_private_endpoint" "sa_private_endpoint" {
-  for_each            = { for sa in var.storage_accounts: sa.key => sa }
+  for_each            = { for sa in var.storage_accounts : sa.key => sa }
   name                = format("sa-pe-%s-%s", each.key, local.suffix)
   resource_group_name = azurerm_resource_group.resource_group.name
   location            = azurerm_resource_group.resource_group.location
@@ -63,7 +63,7 @@ resource "azurerm_private_endpoint" "sa_private_endpoint" {
   private_service_connection {
     name                           = "pe-sa-${local.suffix}"
     private_connection_resource_id = azurerm_storage_account.storage_account[each.key].id
-    subresource_names              = ["blob"] 
+    subresource_names              = ["blob"]
     is_manual_connection           = false
   }
 
@@ -75,11 +75,11 @@ resource "azurerm_private_endpoint" "sa_private_endpoint" {
 
 locals {
   containers = merge(
-    [ for stg in var.storage_accounts :
+    [for stg in var.storage_accounts :
       { for container in stg.containers :
         "${stg.key}_${container}" => {
-          key      = stg.key
-          container = container }
+          key = stg.key
+        container = container }
       }
     ]
   ...)

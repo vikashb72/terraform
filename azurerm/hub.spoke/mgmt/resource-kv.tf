@@ -50,22 +50,22 @@ resource "azurerm_key_vault" "kv" {
   ]
 }
 
-resource "azurerm_key_vault_access_policy" "access_policy_full" {
-  key_vault_id = azurerm_key_vault.kv.id
-
-  tenant_id = data.azurerm_client_config.current.tenant_id
-  object_id = var.kv_owner_object_id
-
-  certificate_permissions = var.kv_certificate_permissions_full
-  key_permissions         = var.kv_key_permissions_full
-  secret_permissions      = var.kv_secret_permissions_full
-  storage_permissions     = var.kv_storage_permissions_full
-
-
-  depends_on = [
-    azurerm_key_vault.kv
-  ]
-}
+#resource "azurerm_key_vault_access_policy" "access_policy_full" {
+#  key_vault_id = azurerm_key_vault.kv.id
+#
+#  tenant_id = data.azurerm_client_config.current.tenant_id
+#  object_id = var.kv_owner_object_id
+#
+#  certificate_permissions = var.kv_certificate_permissions_full
+#  key_permissions         = var.kv_key_permissions_full
+#  secret_permissions      = var.kv_secret_permissions_full
+#  storage_permissions     = var.kv_storage_permissions_full
+#
+#
+#  depends_on = [
+#    azurerm_key_vault.kv
+#  ]
+#}
 
 # Create private DNS zone for key vault
 resource "azurerm_private_dns_zone" "pdz_kv" {
@@ -85,7 +85,7 @@ resource "azurerm_private_dns_zone" "pdz_kv" {
 
 # Create private virtual network link to spoke vnet
 resource "azurerm_private_dns_zone_virtual_network_link" "kv_pdz_vnet_link" {
-  name                  = "privatelink_to_${azurerm_virtual_network.vnet.name}"
+  name                  = "pdz-link-${local.suffix}"
   resource_group_name   = azurerm_resource_group.resource_group.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
   private_dns_zone_name = azurerm_private_dns_zone.pdz_kv.name
@@ -112,7 +112,7 @@ resource "azurerm_private_endpoint" "pe_kv" {
   tags                = local.tags
 
   private_service_connection {
-    name                           = "pe-${azurerm_key_vault.kv.name}"    
+    name                           = "pe-${azurerm_key_vault.kv.name}"
     private_connection_resource_id = azurerm_key_vault.kv.id
     is_manual_connection           = false
     subresource_names              = ["vault"]

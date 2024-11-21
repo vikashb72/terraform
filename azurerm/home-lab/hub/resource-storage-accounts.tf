@@ -17,10 +17,11 @@ resource "azurerm_storage_account" "storage_account" {
 # Create storage container
 resource "azurerm_storage_container" "storage_container" {
   for_each              = toset(var.storage_containers)
-  name                  = format("sc-%s-%s", each.key, local.suffix)
+  name                  = each.key
   storage_account_id    = azurerm_storage_account.storage_account.id
-  #storage_account_name  = azurerm_storage_account.storage_account.name
   container_access_type = "private"
+  #name                  = format("sc-%s-%s", each.key, local.suffix)
+  #storage_account_name  = azurerm_storage_account.storage_account.name
 
   lifecycle {
     prevent_destroy = false

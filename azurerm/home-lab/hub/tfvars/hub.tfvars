@@ -39,6 +39,5 @@ snets        = {
 }
 
 storage_containers = [
-  "logs",
-  "tfstate-hub-za"
+  "tfstate-hub-lab-home-wherever"
 ]

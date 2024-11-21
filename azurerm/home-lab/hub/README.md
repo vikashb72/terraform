@@ -14,19 +14,21 @@ Contans the terraform code to establish the hub components
 ## Variables
 az login
 
-COMPANY_NAME="wherever"
-UNIT_NAME="home-lab"
-EVT="hub"
+ORGANISATION="wherever"
+DEPARTMENT="home"
+PROJECT="lab"
+ENVIRONMENT="hub"
 SUBSCRIPTION_ID=$(az account show | jq -r '.id')
 CLIENT_ID=$(az ad sp list --display-name sp-terraform-cli \
     | jq -r '.[].servicePrincipalNames[0]')
+CLIENT_SECRET=$(az keyvault secret show --vault-name kv-home-where-ever \
+    --query value -o tsv --name Provisioning-Client-Secret)
 TENANT_ID=$(az account show | jq -r '.tenantId')
-TF_STORAGE_ACCOUNT_NAME="sahomelabwherver01cd8q"
-TF_STORAGE_ACCOUNT_RGRP="rg-hub-home-lab-wherever"
-MANAGEMENT_KV="kv-hub-home-lab-wherever"
-MANAGEMENT_RG="rg-hub-home-lab-wherever"
-SERVICE_PRINCIPLE_PW="TBD"
-CONTAINER_NAME="sc-tfstate-hub-za-hub-home-lab-wherever"
+TF_STORAGE_ACCOUNT_NAME="st${ENVIRONMENT}{$PROJECT}${DEPARTMENT}${ORGANISATION}01"
+TF_STORAGE_ACCOUNT_RGRP="rg-${ENVIRONMENT}-${PROJECT}-${DEPARTMENT}-${ORGANISATION}"
+#MANAGEMENT_KV="kv-${ENVIRONMENT}-${PROJECT}-${DEPARTMENT}-${ORGANISATION}"
+#MANAGEMENT_RG="rg-${ENVIRONMENT}-${PROJECT}-${DEPARTMENT}-${ORGANISATION}"
+CONTAINER_NAME="tfstate-${ENVIRONMENT}-${PROJECT}-${DEPARTMENT}-${ORGANISATION}"
 CONTAINER_KEY_NAME="hub.tfstate"
 
 ## Setup (if required)
@@ -52,14 +54,16 @@ terraform init -backend-config=storage_account_name=$TF_STORAGE_ACCOUNT_NAME \
 
 ## Plan
 terraform plan \
-  -var-file="../tfvars/hub.tfvars" \
-  -var-file="tfvars/hub.tfvars" \
+  -var-file="../tfvars-shared/${ENVIRONMENT}.tfvars" \
+  -var-file="tfvars/${ENVIRONMENT}.tfvars" \
   -var="tenant_id=${TENANT_ID}" \
   -var="subscription_id=${SUBSCRIPTION_ID}" \
   -var="storage_account=$TF_STORAGE_ACCOUNT_NAME" \
-  -out hub.pipeline.tfplan
+  -out ${ENVIRONMENT}.pipeline.tfplan
 
 ## Apply
-terraform apply \
-  -var "az_tenant_id=${AZ_TENANT_ID}" \
-  -var-file=tfvars/hub.tfvars
+terraform apply ${ENVIRONMENT}.pipeline.tfplan
+#terraform apply \
+#  -var "az_tenant_id=${AZ_TENANT_ID}" \
+#  -var-file=tfvars/${ENVIRONMENT}.tfvars \
+#  -var-file="../tfvars/${ENVIRONMENT}.tfvars" \

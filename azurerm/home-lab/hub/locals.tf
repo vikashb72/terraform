@@ -1,10 +1,19 @@
 locals {
-  suffix = "${var.environment}-${var.unit_name}-${var.company_name}"
+  suffix = join("-",
+    [
+      "${var.environment}",
+      "${var.project}",
+      "${var.department}",
+      "${var.organisation}",
+      "${var.region_code}"
+    ]
+  )
 
   tags = {
     environment  = var.environment
-    company_name = var.company_name
-    unit_name    = var.unit_name
+    organisation = var.organisation
+    department   = var.department
+    project      = var.project
     region       = var.region
   }
 }

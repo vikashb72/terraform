@@ -1,3 +1,6 @@
-company_name  = "wherever"
-unit_name     = "home-lab"
+organisation  = "wherever"
+department    = "home"
+project       = "lab"
 environment   = "hub"
+region_code   = "za"
+region        = "southafricanorth"
